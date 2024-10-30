@@ -7,6 +7,12 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Azure Artifacts Credential Provider
+          command: |
+            mkdir -p ~/.nuget/plugins
+            curl -Lsfo ~/.nuget/plugins/netcore/CredentialProvider.Microsoft/netcoreapp2.1/Microsoft.AzureArtifactsCredentialProvider.netcoreapp2.1.zip https://aka.ms/install-artifacts-credprovider.sh
+            unzip ~/.nuget/plugins/netcore/CredentialProvider.Microsoft/netcoreapp2.1/Microsoft.AzureArtifactsCredentialProvider.netcoreapp2.1.zip -d ~/.nuget/plugins/netcore/CredentialProvider.Microsoft/netcoreapp2.1/
+      - run:
           name: Restore NuGet Packages
           command: dotnet restore CircleCiTest/CircleCiTest.csproj
       - run:
