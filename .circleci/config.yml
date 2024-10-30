@@ -26,7 +26,9 @@ jobs:
           destination: nuget-packages
       - run:
           name: Push to Azure DevOps NuGet Feed
-          command: dotnet nuget push ./nupkgs/*.nupkg --source "https://pkgs.dev.azure.com/phxmn/_packaging/dependencies-shared/nuget/v3/index.json" --api-key "$AZURE_DEVOPS_APIKEY"
+          command: |
+            nuget sources add -name "AzureDevOps" -source "https://pkgs.dev.azure.com/phxmn/_packaging/dependencies-shared/nuget/v3/index.json" -username "AzureDevOps" -password "$AZURE_DEVOPS_APIKEY" -storepasswordincleartext
+            nuget push ./nupkgs/*.nupkg -source "AzureDevOps" -apikey "$AZURE_DEVOPS_APIKEY"
 
 workflows:
   version: 2
