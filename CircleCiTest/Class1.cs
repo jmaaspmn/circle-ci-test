@@ -1,7 +1,6 @@
-﻿namespace CircleCiTest;
-
+﻿namespace CircleCiTest
 {
-    public class Greeting
+    public class Class1
     {
         public string SayHello()
         {
