@@ -1,0 +1,29 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:8.0  # Use .NET 8 SDK Docker image
+    steps:
+      - checkout
+      - run:
+          name: Restore NuGet Packages
+          command: dotnet restore CircleCiTest/CircleCiTest.csproj
+      - run:
+          name: Build Project
+          command: dotnet build CircleCiTest/CircleCiTest.csproj --configuration Release
+      - run:
+          name: Create NuGet Package
+          command: dotnet pack CircleCiTest/CircleCiTest.csproj --configuration Release --output ./nupkgs
+      - store_artifacts:
+          path: ./nupkgs
+          destination: nuget-packages
+      - run:
+          name: Push to Azure DevOps NuGet Feed
+          command: dotnet nuget push ./nupkgs/*.nupkg --source "https://pkgs.dev.azure.com/phxmn/_packaging/dependencies-shared/nuget/v3/index.json" --api-key "$AZURE_DEVOPS_APIKEY"
+
+workflows:
+  version: 2
+  build_and_pack:
+    jobs:
+      - build
