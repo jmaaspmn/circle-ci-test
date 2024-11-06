@@ -20,7 +20,8 @@ jobs:
           command: dotnet build CircleCiTest/CircleCiTest.csproj --configuration Release
       - run:
           name: Create NuGet Package
-          command: dotnet pack CircleCiTest/CircleCiTest.csproj --configuration Release --output ./nupkgs
+          command: |
+            dotnet pack CircleCiTest/CircleCiTest.csproj --configuration Release --output ./nupkgs /p:Version=1.0.$CIRCLE_BUILD_NUM
       - store_artifacts:
           path: ./nupkgs
           destination: nuget-packages
