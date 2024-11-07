@@ -34,8 +34,12 @@ jobs:
       - run:
           name: Install Octopus CLI
           command: |
-            curl -Lsfo octo.tar.gz https://download.octopus.com/octopus-tools/latest/linux-x64
-            tar xzf octo.tar.gz -C /usr/local/bin
+            curl -Lsfo octo.tar.gz https://download.octopus.com/octopus-tools/8.0.3/OctopusTools.8.0.3.linux-x64.tar.gz
+            if [ $? -ne 0 ]; then
+              echo "Failed to download Octopus CLI"
+              exit 1
+            fi
+            tar xzf octo.tar.gz -C /usr/local/bin --strip-components=1
       - run:
           name: Create Octopus Release
           command: |
