@@ -32,10 +32,12 @@ jobs:
               --name "AzureDevOps" --username "AzureDevOps" --password "$AZURE_DEVOPS_APIKEY" --store-password-in-clear-text
             dotnet nuget push ./nupkgs/*.nupkg --source "AzureDevOps" --api-key "$AZURE_DEVOPS_APIKEY"
       - run:
-          name: Install Octopus CLI as Global Tool
+          name: Download and Install Octopus CLI
           command: |
-            dotnet tool install --global Octopus.Cli
-            export PATH="$PATH:/root/.dotnet/tools"
+            curl -Lsfo octo.tar.gz https://download.octopus.com/octopus-tools/8.0.3/OctopusTools.8.0.3.linux-x64.tar.gz
+            mkdir -p octo
+            tar -xzf octo.tar.gz -C octo
+            export PATH="$PATH:$(pwd)/octo"
       - run:
           name: Create Octopus Release
           command: |
