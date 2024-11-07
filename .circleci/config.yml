@@ -32,9 +32,14 @@ jobs:
               --name "AzureDevOps" --username "AzureDevOps" --password "$AZURE_DEVOPS_APIKEY" --store-password-in-clear-text
             dotnet nuget push ./nupkgs/*.nupkg --source "AzureDevOps" --api-key "$AZURE_DEVOPS_APIKEY"
       - run:
+          name: Debug Octopus CLI Download
+          command: |
+            echo "Testing URL access with curl"
+            curl -v https://download.octopus.com/octopus-tools/8.0.3/OctopusTools.8.0.3.linux-x64.zip
+      - run:
           name: Download and Install Octopus CLI
           command: |
-            curl -Lsfo octo.zip https://download.octopus.com/octopus-tools/8.0.3/OctopusTools.8.0.3.linux-x64.zip
+            curl -Lfso octo.zip https://download.octopus.com/octopus-tools/8.0.3/OctopusTools.8.0.3.linux-x64.zip
             mkdir octo
             unzip -q octo.zip -d octo
             export PATH="$PATH:$(pwd)/octo"
