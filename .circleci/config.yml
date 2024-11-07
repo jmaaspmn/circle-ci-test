@@ -31,6 +31,20 @@ jobs:
             dotnet nuget add source "https://pkgs.dev.azure.com/phxmn/_packaging/dependencies-shared/nuget/v3/index.json" \
               --name "AzureDevOps" --username "AzureDevOps" --password "$AZURE_DEVOPS_APIKEY" --store-password-in-clear-text
             dotnet nuget push ./nupkgs/*.nupkg --source "AzureDevOps" --api-key "$AZURE_DEVOPS_APIKEY"
+      - run:
+          name: Install Octopus CLI
+          command: |
+            curl -Lsfo octo.tar.gz https://download.octopus.com/octopus-tools/latest/linux-x64
+            tar xzf octo.tar.gz -C /usr/local/bin
+      - run:
+          name: Create Octopus Release
+          command: |
+            octo create-release \
+              --project "CircleCI Test" \
+              --releaseNumber "1.0.$CIRCLE_BUILD_NUM" \
+              --packageversion "1.0.$CIRCLE_BUILD_NUM" \
+              --server "$OCTOPUS_SERVER" \
+              --apiKey "$OCTOPUS_API_KEY" \
 
 workflows:
   version: 2
