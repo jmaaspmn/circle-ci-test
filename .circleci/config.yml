@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  octopus: octopus-deploy/octopus-cli@1.0.0  # Use the latest version of the Octopus Orb
+
 jobs:
   build:
     docker:
@@ -31,22 +34,13 @@ jobs:
             dotnet nuget add source "https://pkgs.dev.azure.com/phxmn/_packaging/dependencies-shared/nuget/v3/index.json" \
               --name "AzureDevOps" --username "AzureDevOps" --password "$AZURE_DEVOPS_APIKEY" --store-password-in-clear-text
             dotnet nuget push ./nupkgs/*.nupkg --source "AzureDevOps" --api-key "$AZURE_DEVOPS_APIKEY"
-      - run:
-          name: Download and Install Octopus CLI
-          command: |
-            curl -Lsfo octo.tar.gz https://download.octopus.com/octopus-tools/8.0.3/OctopusTools.8.0.3.linux-x64.tar.gz
-            mkdir -p octo
-            tar -xzf octo.tar.gz -C octo
-            export PATH="$PATH:$(pwd)/octo"
-      - run:
-          name: Create Octopus Release
-          command: |
-            octo create-release \
-              --project "CircleCI Test" \
-              --releaseNumber "1.0.$CIRCLE_BUILD_NUM" \
-              --packageversion "1.0.$CIRCLE_BUILD_NUM" \
-              --server "$OCTOPUS_SERVER" \
-              --apiKey "$OCTOPUS_API_KEY" \
+      - octopus/create-release:
+          server: $OCTOPUS_SERVER
+          api-key: $OCTOPUS_API_KEY
+          project: "CircleCI Test"
+          release-number: "1.0.$CIRCLE_BUILD_NUM"
+          deploy-to: "YourEnvironmentName"
+          packages: "CircleCiTest:1.0.$CIRCLE_BUILD_NUM"
 
 workflows:
   version: 2
