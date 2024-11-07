@@ -32,24 +32,14 @@ jobs:
               --name "AzureDevOps" --username "AzureDevOps" --password "$AZURE_DEVOPS_APIKEY" --store-password-in-clear-text
             dotnet nuget push ./nupkgs/*.nupkg --source "AzureDevOps" --api-key "$AZURE_DEVOPS_APIKEY"
       - run:
-          name: Configure Octopus CLI as Local Tool
+          name: Install Octopus CLI as Global Tool
           command: |
-            mkdir -p .config/dotnet-tools
-            echo '{
-              "version": 1,
-              "isRoot": true,
-              "tools": {
-                "octopus.cli": {
-                  "version": "8.0.3",
-                  "commands": ["octo"]
-                }
-              }
-            }' > .config/dotnet-tools/dotnet-tools.json
-            dotnet tool restore
+            dotnet tool install --global Octopus.Cli
+            export PATH="$PATH:/root/.dotnet/tools"
       - run:
           name: Create Octopus Release
           command: |
-            dotnet tool run octo create-release \
+            octo create-release \
               --project "CircleCI Test" \
               --releaseNumber "1.0.$CIRCLE_BUILD_NUM" \
               --packageversion "1.0.$CIRCLE_BUILD_NUM" \
