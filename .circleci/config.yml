@@ -32,6 +32,12 @@ jobs:
               --name "AzureDevOps" --username "AzureDevOps" --password "$AZURE_DEVOPS_APIKEY" --store-password-in-clear-text
             dotnet nuget push ./nupkgs/*.nupkg --source "AzureDevOps" --api-key "$AZURE_DEVOPS_APIKEY"
       - run:
+          name: Prepare .NET Tool Directory for Octopus CLI
+          command: |
+            mkdir -p /root/.dotnet/tools
+            mkdir -p /root/.dotnet/tools/.store
+            export PATH="$PATH:/root/.dotnet/tools"
+      - run:
           name: Install Octopus CLI as Dotnet Tool
           command: |
             dotnet tool install -g Octopus.Cli
